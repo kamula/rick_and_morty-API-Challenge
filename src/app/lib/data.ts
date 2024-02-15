@@ -46,3 +46,17 @@ export async function fetchLocationDetails(id: number | string) {
         throw error;
     }
 }
+
+
+export async function fetchCharacterDetails(id: number | string) {
+    // Function to fetch single character details 
+    try {
+
+        const { data: characterData } = await axios.get(`${BASE_URL}/character/${id}`);
+
+        return characterData;
+    } catch (error) {
+        console.error("Error fetching character details with Axios:", error);
+        throw error;
+    }
+}
