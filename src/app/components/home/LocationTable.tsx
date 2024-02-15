@@ -8,7 +8,7 @@ interface Location {
 }
 
 interface LocationTableProps {
-    data: Location[];
+    data: any[]
 }
 
 
