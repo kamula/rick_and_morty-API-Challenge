@@ -2,9 +2,11 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState } from 'react';
 import Image from 'next/image';
+import axios from 'axios';
 
 interface CharacterDetailCardProps {
     character: {
+        id: string;
         name: string;
         status: string;
         species: string;
@@ -27,15 +29,32 @@ export default function CharacterDetailCard({ character }: CharacterDetailCardPr
         setIsOpen(true);
     }
 
+
     function saveNote() {
         if (!note.trim()) {
             setError('Note cannot be empty.');
             return;
         }
-        //Save Note logic
-        console.log(note);
-        closeModal();
+
+        const characterId = character.id;
+        const formData = new FormData();
+        // Append the characterId and note to the formData
+        formData.append('characterId', characterId);
+        formData.append('note', note);
+
+
+        axios.post('/api/notes', formData)
+            .then(response => {
+                console.log('Note saved:', response.data);
+                closeModal();
+            })
+            .catch(error => {
+                console.error('Error saving note:', error);
+            });
     }
+
+
+
 
     return (
         <div>
