@@ -72,3 +72,4 @@ Navigate to `http://localhost:3000` to view the application.
 ## Conclusion
 
 This Rick and Morty API Challenge project showcases the capabilities of Next.js combined with the power of parallel data processing and RESTful services. By leveraging Vercel PostgreSQL for data management, the application is well-positioned for scalability, performance, and security. Explore the wondrous universe of Rick and Morty with this interactive and engaging application!
+
