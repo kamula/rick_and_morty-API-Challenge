@@ -30,7 +30,7 @@ For data fetching from the Rick and Morty API endpoint, I've chosen to use RESTf
 
 ### Vercel PostgreSQL Database
 
-Users are required to configure a Vercel PostgreSQL database to store and manage the residents' data. The necessary configuration values are provided in the `example.env` file. Please refer to the [Vercel PostgreSQL documentation](https://vercel.com/docs/concepts/next.js/overview) for detailed setup instructions.
+Users are required to configure a Vercel PostgreSQL database to store and manage the residents' data. The necessary configuration values are provided in the `example.env` file. Please refer to the [Vercel PostgreSQL documentation](https://vercel.com/docs/storage/vercel-postgres/quickstart) for detailed setup instructions.
 
 **Note**: It's essential to rename `example.env` to `.env.local` and fill in the database connection details to ensure the application functions correctly.
 
