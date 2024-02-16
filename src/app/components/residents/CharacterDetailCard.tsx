@@ -1,8 +1,11 @@
 "use client"
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 interface CharacterDetailCardProps {
     character: {
@@ -16,10 +19,15 @@ interface CharacterDetailCardProps {
     };
 }
 
+interface NoteItem {
+    note: string;
+}
+
 export default function CharacterDetailCard({ character }: CharacterDetailCardProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [note, setNote] = useState('');
     const [error, setError] = useState('');
+    const [notes, setNotes] = useState<NoteItem[]>([]);
 
     function closeModal() {
         setIsOpen(false);
@@ -28,6 +36,20 @@ export default function CharacterDetailCard({ character }: CharacterDetailCardPr
     function openModal() {
         setIsOpen(true);
     }
+
+    const loadNotes = () => {
+        axios.get(`/api/notes/${character.id}`)
+            .then(response => {
+                setNotes(response.data);
+            })
+            .catch(error => {
+                toast.error(`Error fetching notes ${error}`)
+            });
+    };
+
+    useEffect(() => {
+        loadNotes();
+    }, [character.id]);
 
 
     function saveNote() {
@@ -45,19 +67,34 @@ export default function CharacterDetailCard({ character }: CharacterDetailCardPr
 
         axios.post('/api/notes', formData)
             .then(response => {
-                console.log('Note saved:', response.data);
+                toast.success(`Note successfully saved for ${character.name}`)
+                loadNotes()
                 closeModal();
             })
             .catch(error => {
-                console.error('Error saving note:', error);
+                toast.error(`Error saving note for ${character.name}`)
             });
     }
 
 
 
 
+
+
     return (
         <div>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
             <div className="flex justify-end p-4">
                 <button
                     onClick={openModal}
@@ -152,6 +189,14 @@ export default function CharacterDetailCard({ character }: CharacterDetailCardPr
                         </div>
                     </Dialog>
                 </Transition>
+            </div>
+            <div className='mt-2'>
+                <h3 className='font-bold'>Notes</h3>
+                <ul>
+                    {notes.map((item, index) => (
+                        <li key={index}>{index+1}. {item.note}</li>
+                    ))}
+                </ul>
             </div>
         </div>
     );

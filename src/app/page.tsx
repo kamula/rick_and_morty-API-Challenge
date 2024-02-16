@@ -22,6 +22,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchData = async () => {
       const data: Location[] = await fetchLocations();
+      
       setLocationData(data);
       setFilteredData(data);
     };

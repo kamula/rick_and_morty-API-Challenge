@@ -1,22 +1,61 @@
 import axios from 'axios';
+import { createClient } from '@vercel/postgres';
+
 
 const BASE_URL = 'https://rickandmortyapi.com/api';
 
-export async function fetchLocations() {
-    /*
-        function to retrieve a list of locations (name and type), 
-        along with the residents of that location and their status.
-    */
-    try {
-        const { data: locationsData } = await axios.get(`${BASE_URL}/location`);
-        return locationsData.results
 
+interface Location {
+    id: string;
+    name: string;
+    type: string;
+    residents: string[];
+}
+
+interface Resident {
+    name: string;
+    status: string;
+}
+
+interface LocationWithResidents {
+    id: string;
+    name: string;
+    type: string;
+    residents: Resident[];
+}
+
+export async function fetchLocations(): Promise<LocationWithResidents[]> {
+    try {
+        const { data: { results: locations } } = await axios.get<{ results: Location[] }>(`${BASE_URL}/location`);
+
+        const locationsWithResidents: LocationWithResidents[] = await Promise.all(
+            locations.map(async (location): Promise<LocationWithResidents> => {
+                const residents: Resident[] = await Promise.all(
+                    location.residents.map(async (residentURL): Promise<Resident> => {
+                        const { data: residentData } = await axios.get<Resident>(residentURL);
+                        return {
+                            name: residentData.name,
+                            status: residentData.status,
+                        };
+                    })
+                );
+
+                return {
+                    id: location.id,
+                    name: location.name,
+                    type: location.type,
+                    residents,
+                };
+            })
+        );
+
+        return locationsWithResidents;
     } catch (error) {
         console.error("Error fetching locations and residents with Axios:", error);
         throw error;
     }
-
 }
+
 
 
 export async function fetchLocationDetails(id: number | string) {
@@ -60,3 +99,5 @@ export async function fetchCharacterDetails(id: number | string) {
         throw error;
     }
 }
+
+
